@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
 const listingRoutes = require("./routes/listingRoutes");
+const savedRoutes = require("./routes/savedRoutes");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/listings", listingRoutes);
+app.use("/api/saved", savedRoutes);
 
 const PORT = process.env.PORT || 5000;
 
