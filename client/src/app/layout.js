@@ -2,6 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "@/context/AuthContext";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +26,7 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-white/20 selection:text-white">
-      <Toaster
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: 3000,
@@ -36,6 +38,7 @@ export default function RootLayout({ children }) {
             },
           }}
         />
+
         {/* Subtle background texture */}
         <div className="pointer-events-none fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_50%_-10%,rgba(255,255,255,0.14),transparent_60%)]" />
@@ -43,20 +46,20 @@ export default function RootLayout({ children }) {
           <div className="absolute inset-0 bg-[radial-gradient(40rem_30rem_at_90%_60%,rgba(167,139,250,0.10),transparent_60%)]" />
         </div>
 
-        <Navbar />
+        {/* Client auth state provider */}
+        <AuthProvider>
+          <Navbar />
 
-        <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-          <div className="rounded-2xl border border-white/10 bg-white/3 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur sm:p-8">
-            {children}
-          </div>
-        </main>
+          <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+            <div className="rounded-2xl border border-white/10 bg-white/3 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur sm:p-8">
+              {children}
+            </div>
+          </main>
+        </AuthProvider>
 
         <footer className="mx-auto w-full max-w-6xl px-4 pb-10 text-xs text-white/50 sm:px-6">
           <div className="flex flex-col gap-2 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} Explorely</span>
-            <span className="text-white/40">
-              Built with Next.js + Tailwind
-            </span>
+           <Footer />
           </div>
         </footer>
       </body>

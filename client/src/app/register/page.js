@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import API from "../../services/api";
 import toast from "react-hot-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Register() {
   const router = useRouter();
+  const { logout } = useAuth();
 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +29,10 @@ export default function Register() {
 
     try {
       await API.post("/auth/register", form);
+
+      // Optional safety: ensure no stale token is hanging around
+      // (remove if your app never has this situation)
+      logout?.();
 
       toast.success("Account created successfully");
       router.push("/login");

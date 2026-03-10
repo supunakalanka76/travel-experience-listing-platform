@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import API from "../../services/api";
 import toast from "react-hot-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const router = useRouter();
+  const { login, ready, isLoggedIn } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,13 +17,27 @@ export default function Login() {
 
   const [submitting, setSubmitting] = useState(false);
 
+  // If already logged in, redirect away from login page
+  useEffect(() => {
+    if (!ready) return;
+    if (isLoggedIn) router.push("/feed");
+  }, [ready, isLoggedIn, router]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
       const res = await API.post("/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
+
+      const { token, _id, name, email: userEmail } = res?.data || {};
+      if (!token) throw new Error("Missing token");
+
+      // Store both token + user in AuthContext (and localStorage via context)
+      login({
+        token,
+        user: { _id, name, email: userEmail },
+      });
 
       toast.success("Logged in successfully");
       router.push("/feed");
