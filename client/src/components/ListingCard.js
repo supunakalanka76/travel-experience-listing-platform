@@ -2,15 +2,48 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo } from "react";
+
+function timeAgo(dateValue) {
+  if (!dateValue) return "";
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const diffMs = Date.now() - date.getTime();
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+
+  if (diffSec < 60) return `Posted ${diffSec}s ago`;
+
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `Posted ${diffMin}m ago`;
+
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `Posted ${diffHr}h ago`;
+
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `Posted ${diffDay}d ago`;
+
+  return `Posted ${date.toLocaleDateString()}`;
+}
 
 export default function ListingCard({ listing }) {
+  const authorName = listing?.user?.name || "Unknown";
+  const postedText = useMemo(
+    () => timeAgo(listing?.createdAt),
+    [listing?.createdAt]
+  );
+
+  // Defensive: avoid runtime crash if listing is missing
+  if (!listing) return null;
+
   return (
     <Link
       href={`/listing/${listing._id}`}
       className="group block focus:outline-none"
-      aria-label={`View listing: ${listing.title}`}
+      aria-label={`View listing: ${listing?.title || "listing"}`}
     >
-      <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/3 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.45)] focus-within:ring-2 focus-within:ring-white/30">
+      <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/3 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:border-white/15">
         {/* Image */}
         <div className="relative h-48 w-full">
           <Image
@@ -42,26 +75,32 @@ export default function ListingCard({ listing }) {
               {listing.title}
             </h2>
 
-            {/* subtle arrow */}
             <span className="mt-0.5 text-white/50 transition group-hover:text-white/80">
               →
             </span>
           </div>
 
+          {/* Short description */}
           {listing.description ? (
             <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/70">
               {listing.description}
             </p>
-          ) : null}
+          ) : (
+            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/50">
+              No description provided.
+            </p>
+          )}
 
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-xs text-white/50">
-              View details
-              <span className="transition group-hover:translate-x-0.5 inline-block">
-                {" "}
-                →
-              </span>
-            </span>
+          {/* Meta: user + time */}
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-xs text-white/60">
+                By <span className="text-white/80">{authorName}</span>
+              </p>
+              {postedText ? (
+                <p className="text-[11px] text-white/45">{postedText}</p>
+              ) : null}
+            </div>
 
             <span className="rounded-full border border-white/10 bg-white/3 px-2 py-1 text-[11px] font-medium text-white/70">
               Explorely

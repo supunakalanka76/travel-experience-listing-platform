@@ -8,6 +8,7 @@ import Link from "next/link";
 
 export default function ListingDetail() {
   const { id } = useParams();
+
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);

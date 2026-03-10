@@ -46,7 +46,7 @@ export default function Feed() {
             setLoading(true);
             fetchListings();
           }}
-          className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/3 px-4 py-2 text-sm font-semibold text-white hover:bg-white/6 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/3 px-4 py-2 text-sm font-semibold text-white hover:bg-white/6 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition disabled:opacity-50 cursor-pointer"
           disabled={loading}
         >
           {loading ? "Loading…" : "Refresh"}

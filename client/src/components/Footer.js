@@ -1,149 +1,144 @@
+"use client";
+
 import Link from "next/link";
-import { 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Youtube, 
-  Mail, 
-  MapPin, 
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Mail,
+  MapPin,
   Phone,
-  Heart
+  Heart,
 } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="relative mt-20 bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-t border-gray-200 dark:border-gray-800">
-      {/* Decorative top wave */}
-      <div className="absolute top-0 left-0 right-0 h-6 bg-linear-to-t from-transparent to-white/50 dark:to-gray-900/50" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand Column */}
-          <div className="space-y-4">
-            <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold bg-linear-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+    <footer className="relative mt-16 border-t border-white/10">
+      {/* background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(50rem_30rem_at_50%_120%,rgba(255,255,255,0.10),transparent_65%)]" />
+      </div>
+
+      <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
+        {/* Top grid */}
+        <div className="grid gap-10 md:grid-cols-3">
+          {/* Brand */}
+          <div className="space-y-3">
+            <Link
+              href="/feed"
+              className="inline-flex items-center rounded-md px-2 py-1 text-base font-semibold tracking-tight text-white hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            >
+              <span className="bg-linear-to-r from-white to-white/60 bg-clip-text text-transparent">
                 Explorely
               </span>
             </Link>
-            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              Discover unique travel experiences hosted by passionate locals around the world. Create memories that last a lifetime.
+
+            <p className="text-sm leading-relaxed text-white/60">
+              Discover and share travel experiences with the community. Save your
+              favorites and get inspired for your next trip.
             </p>
-            <div className="flex space-x-4 pt-2">
-              <a href="#" className="text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                <Youtube className="h-5 w-5" />
-              </a>
-            </div>
-          </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
-            <ul className="space-y-3">
-              {['About Us', 'How It Works', 'Become a Host', 'Contact Us', 'Blog'].map((item) => (
-                <li key={item}>
-                  <Link 
-                    href="#" 
-                    className="text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 text-sm transition-colors"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Support</h3>
-            <ul className="space-y-3">
-              {['Help Center', 'Safety Information', 'Cancellation Options', 'COVID-19 Updates', 'Report an Issue'].map((item) => (
-                <li key={item}>
-                  <Link 
-                    href="#" 
-                    className="text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 text-sm transition-colors"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Contact Us</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span className="text-gray-600 dark:text-gray-400 text-sm">
-                  123 Travel Street, Adventure City, AC 12345
-                </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span className="text-gray-600 dark:text-gray-400 text-sm">+1 (555) 123-4567</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span className="text-gray-600 dark:text-gray-400 text-sm">hello@explorely.com</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Newsletter Signup */}
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <div className="bg-linear-to-r from-emerald-50 to-teal-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 lg:p-8">
-            <div className="max-w-3xl mx-auto text-center">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                Get inspired for your next adventure
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
-                Subscribe to our newsletter and receive exclusive offers, travel tips, and inspiration.
-              </p>
-              <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-linear-to-r from-emerald-600 to-teal-600 text-white font-medium rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all transform hover:scale-105 shadow-md hover:shadow-xl"
+            {/* Social */}
+            <div className="flex items-center gap-2 pt-1">
+              {[
+                { Icon: Facebook, label: "Facebook", href: "#" },
+                { Icon: Twitter, label: "Twitter", href: "#" },
+                { Icon: Instagram, label: "Instagram", href: "#" },
+                { Icon: Youtube, label: "YouTube", href: "#" },
+              ].map(({ Icon, label, href }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                 >
-                  Subscribe
-                </button>
-              </form>
+                  <Icon className="h-5 w-5" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick links */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-white/85">Quick links</p>
+            <div className="flex flex-col gap-2 text-sm">
+              <Link
+                href="/feed"
+                className="text-white/60 hover:text-white transition"
+              >
+                Feed
+              </Link>
+              <Link
+                href="/create"
+                className="text-white/60 hover:text-white transition"
+              >
+                Create listing
+              </Link>
+              <Link
+                href="/my-listings"
+                className="text-white/60 hover:text-white transition"
+              >
+                My listings
+              </Link>
+              <Link
+                href="/saved"
+                className="text-white/60 hover:text-white transition"
+              >
+                Saved
+              </Link>
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-white/85">Contact</p>
+
+            <div className="space-y-2 text-sm text-white/60">
+              <div className="flex items-start gap-2">
+                <MapPin className="mt-0.5 h-4 w-4 text-white/50" />
+                <span>Colombo, Sri Lanka</span>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <Mail className="mt-0.5 h-4 w-4 text-white/50" />
+                <Link
+                  href="mailto:hello@explorely.com"
+                  className="hover:text-white transition"
+                >
+                  hello@explorely.com
+                </Link>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 text-white/50" />
+                <Link
+                  href="tel:+94110000000"
+                  className="hover:text-white transition"
+                >
+                  +94 11 000 0000
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
-            © 2024 Explorely. All rights reserved. Made with 
-            <Heart className="h-4 w-4 text-red-500 fill-red-500" />
-            for travelers
+        {/* Bottom bar */}
+        <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
+          <p className="text-sm text-white/50 flex items-center gap-1">
+            © {new Date().getFullYear()} Explorely. All rights reserved. Made
+            with <Heart className="h-4 w-4 text-red-400 fill-red-400" /> for
+            travelers
           </p>
-          <div className="flex gap-6 text-sm">
-            <Link href="#" className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <Link href="#" className="text-white/55 hover:text-white transition">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+            <Link href="#" className="text-white/55 hover:text-white transition">
               Terms of Service
             </Link>
-            <Link href="#" className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400">
+            <Link href="#" className="text-white/55 hover:text-white transition">
               Cookie Policy
             </Link>
           </div>
