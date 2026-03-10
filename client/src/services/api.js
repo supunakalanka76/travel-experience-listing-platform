@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://travel-api.onrender.com/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://travel-api-vnf1.onrender.com/api",
 });
 
 // Attach JWT token to every request (client-side only)
