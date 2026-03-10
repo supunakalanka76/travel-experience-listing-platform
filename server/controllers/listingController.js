@@ -22,10 +22,25 @@ exports.createListing = async (req, res) => {
   }
 };
 
-// GET ALL LISTINGS (PUBLIC FEED)
+// GET ALL LISTINGS (PUBLIC FEED) + SEARCH (?q=...)
 exports.getListings = async (req, res) => {
   try {
-    const listings = await Listing.find()
+    const { q } = req.query;
+
+    const filter = {};
+
+    // If q is provided, search in title/location/description (case-insensitive)
+    if (q && String(q).trim()) {
+      const query = String(q).trim();
+
+      filter.$or = [
+        { title: { $regex: query, $options: "i" } },
+        { location: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    const listings = await Listing.find(filter)
       .populate("user", "name")
       .sort({ createdAt: -1 });
 

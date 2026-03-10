@@ -21,47 +21,39 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
-    >
-      <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-white/20 selection:text-white">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="min-h-dvh text-foreground antialiased selection:bg-primary/20 selection:text-foreground">
         <Toaster
           position="top-right"
           toastOptions={{
-            duration: 3000,
+            duration: 5000,
             style: {
-              background: "rgba(24,24,27,0.9)",
-              color: "#fff",
-              border: "1px solid rgba(255,255,255,0.12)",
-              backdropFilter: "blur(10px)",
+              background: "rgba(2, 6, 23, 0.72)",
+              color: "rgba(248, 250, 252, 0.95)",
+              border: "1px solid rgba(148, 163, 184, 0.18)",
+              backdropFilter: "blur(12px)",
             },
           }}
         />
-
-        {/* Subtle background texture */}
-        <div className="pointer-events-none fixed inset-0 -z-10">
-          <div className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_50%_-10%,rgba(255,255,255,0.14),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(40rem_30rem_at_10%_30%,rgba(56,189,248,0.10),transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(40rem_30rem_at_90%_60%,rgba(167,139,250,0.10),transparent_60%)]" />
-        </div>
-
-        {/* Client auth state provider */}
         <AuthProvider>
-          <Navbar />
+          <div className="relative flex min-h-dvh flex-col">
+            <Navbar />
 
-          <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-            <div className="rounded-2xl border border-white/10 bg-white/3 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur sm:p-8">
-              {children}
-            </div>
-          </main>
-        </AuthProvider>
+            <main className="flex-1">
+              <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+                <section className="travel-card p-4 sm:p-6 lg:p-6">
+                  {children}
+                </section>
+              </div>
+            </main>
 
-        <footer className="mx-auto w-full max-w-6xl px-4 pb-10 text-xs text-white/50 sm:px-6">
-          <div className="flex flex-col gap-2 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-           <Footer />
+            <footer className="mx-auto w-full max-w-6xl px-4 pb-10 text-xs text-muted-foreground sm:px-6">
+              <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <Footer />
+              </div>
+            </footer>
           </div>
-        </footer>
+        </AuthProvider>
       </body>
     </html>
   );

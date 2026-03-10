@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import API from "../../services/api";
 import ListingCard from "@/components/ListingCard";
 
@@ -9,11 +9,19 @@ export default function Feed() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const fetchListings = async () => {
+  // Search state
+  const [q, setQ] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
+
+  const fetchListings = async (query = "") => {
     try {
       setErrorMsg(null);
-      const res = await API.get("/listings");
-      setListings(res.data);
+
+      const res = await API.get("/listings", {
+        params: query && query.trim() ? { q: query.trim() } : {},
+      });
+
+      setListings(res.data || []);
     } catch (error) {
       console.log(error);
       setErrorMsg("Couldn’t load listings. Please try again.");
@@ -23,8 +31,28 @@ export default function Feed() {
   };
 
   useEffect(() => {
-    fetchListings();
+    fetchListings("");
   }, []);
+
+  const onSearch = () => {
+    setLoading(true);
+    const next = q.trim();
+    setActiveQuery(next);
+    fetchListings(next);
+  };
+
+  const onClear = () => {
+    setQ("");
+    setActiveQuery("");
+    setLoading(true);
+    fetchListings("");
+  };
+
+  const showingText = useMemo(() => {
+    if (loading) return "Loading…";
+    if (activeQuery) return `Results for “${activeQuery}”`;
+    return "All experiences";
+  }, [loading, activeQuery]);
 
   return (
     <div className="space-y-8">
@@ -41,16 +69,44 @@ export default function Feed() {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setLoading(true);
-            fetchListings();
-          }}
-          className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/3 px-4 py-2 text-sm font-semibold text-white hover:bg-white/6 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition disabled:opacity-50 cursor-pointer"
-          disabled={loading}
-        >
-          {loading ? "Loading…" : "Refresh"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setLoading(true);
+              fetchListings(activeQuery);
+            }}
+            className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/3 px-4 py-2 text-sm font-semibold text-white hover:bg-white/6 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition disabled:opacity-50 cursor-pointer"
+            disabled={loading}
+          >
+            {loading ? "Loading…" : "Refresh"}
+          </button>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex-1">
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onSearch();
+            }}
+            placeholder="Search by title, location, or description…"
+            className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-white/20 focus:ring-2 focus:ring-white/20"
+          />
+          <p className="mt-2 text-xs text-white/45">{showingText}</p>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={onSearch}
+            disabled={loading}
+            className="inline-flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-white/90 transition disabled:opacity-50 mb-6 cursor-pointer"
+          >
+            Search
+          </button>
+        </div>
       </div>
 
       {/* Status */}
@@ -80,16 +136,30 @@ export default function Feed() {
         </div>
       ) : listings.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-white/3 p-10 text-center backdrop-blur">
-          <h2 className="text-base font-semibold text-white">No posts yet</h2>
+          <h2 className="text-base font-semibold text-white">
+            {activeQuery ? "No matches found" : "No posts yet"}
+          </h2>
           <p className="mt-2 text-sm text-white/65">
-            Be the first to share a travel experience.
+            {activeQuery
+              ? "Try a different keyword (e.g., a location or title)."
+              : "Be the first to share a travel experience."}
           </p>
-          <a
-            href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition"
-          >
-            Create a post
-          </a>
+
+          {!activeQuery ? (
+            <a
+              href="/create"
+              className="mt-6 inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition"
+            >
+              Create a post
+            </a>
+          ) : (
+            <button
+              onClick={onClear}
+              className="mt-6 inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-white/90 transition cursor-pointer"
+            >
+              Clear search
+            </button>
+          )}
         </div>
       ) : (
         <>
@@ -104,6 +174,7 @@ export default function Feed() {
           <p className="text-center text-xs text-white/45">
             Showing {listings.length}{" "}
             {listings.length === 1 ? "experience" : "experiences"}
+            {activeQuery ? ` for “${activeQuery}”` : ""}
           </p>
         </>
       )}

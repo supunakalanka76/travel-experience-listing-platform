@@ -4,12 +4,6 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden">
-      {/* background accents */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_50%_-10%,rgba(255,255,255,0.14),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(40rem_30rem_at_10%_30%,rgba(56,189,248,0.10),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(40rem_30rem_at_90%_60%,rgba(167,139,250,0.10),transparent_60%)]" />
-      </div>
 
       <main className="mx-auto flex w-full max-w-6xl flex-col items-center gap-10 px-4 py-14 sm:px-6 sm:py-20">
         {/* Hero */}
@@ -50,36 +44,6 @@ export default function Home() {
                 >
                   New here? Register →
                 </Link>
-              </div>
-            </div>
-
-            {/* Decorative image block */}
-            <div className="w-full max-w-sm">
-              <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-br from-sky-500/15 via-purple-500/10 to-white/5">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.18),transparent_45%)]" />
-                {/* Replace with your image if you have one */}
-                <div className="absolute inset-0 grid place-items-center">
-                  <div className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white/70">
-                    Add a hero image here
-                  </div>
-                </div>
-
-                {/* Example if you do have an image:
-                <Image
-                  src="/hero.jpg"
-                  alt="Travel"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-                */}
-              </div>
-
-              <div className="mt-3 flex items-center justify-between text-xs text-white/50">
-                <span>Curated journeys</span>
-                <span className="rounded-full border border-white/10 bg-white/3 px-2 py-1">
-                  Updated daily
-                </span>
               </div>
             </div>
           </div>
