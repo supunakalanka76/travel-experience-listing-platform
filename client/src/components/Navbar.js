@@ -57,7 +57,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/70 text-white backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link
-          href="/feed"
+          href="/"
           className="rounded-md px-2 py-1 text-lg font-semibold tracking-tight hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
         >
           <span className="bg-linear-to-r from-white to-white/60 bg-clip-text text-transparent">

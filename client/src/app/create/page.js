@@ -52,7 +52,7 @@ export default function CreateListing() {
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Error creating listing. Please try again."
+          "Error creating listing. Log in and try again."
       );
     } finally {
       setSubmitting(false);
