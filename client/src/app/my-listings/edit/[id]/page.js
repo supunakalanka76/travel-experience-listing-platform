@@ -1,23 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import API from "../../services/api";
+import API from "../../../../services/api";
 import toast from "react-hot-toast";
 
-export default function CreateListing() {
+export default function EditMyListingPage() {
+  const { id } = useParams();
   const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
     location: "",
     description: "",
     image: "",
-    price: "", // NEW
+    price: "",
   });
-
-  const [submitting, setSubmitting] = useState(false);
 
   const imageOk = useMemo(() => {
     if (!form.image) return false;
@@ -28,6 +31,32 @@ export default function CreateListing() {
       return false;
     }
   }, [form.image]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setErrorMsg(null);
+        setLoading(true);
+
+        const res = await API.get(`/listings/${id}`);
+        const l = res.data;
+
+        setForm({
+          title: l?.title || "",
+          location: l?.location || "",
+          description: l?.description || "",
+          image: l?.image || "",
+          price: l?.price ?? "",
+        });
+      } catch (e) {
+        setErrorMsg(e?.response?.data?.message || "Couldn’t load listing.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) load();
+  }, [id]);
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -41,43 +70,68 @@ export default function CreateListing() {
     setSubmitting(true);
 
     try {
-      await API.post("/listings", {
+      await API.put(`/listings/${id}`, {
         ...form,
-        // send number or undefined
         price: form.price === "" ? undefined : Number(form.price),
       });
 
-      toast.success("Listing created");
-      router.push("/feed");
+      toast.success("Listing updated");
+      router.push("/my-listings");
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Error creating listing. Please try again."
-      );
+      toast.error(error?.response?.data?.message || "Update failed");
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="mx-auto w-full max-w-3xl space-y-6">
+        <div className="h-10 w-48 animate-pulse rounded-xl bg-white/10" />
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
+          <div className="h-130 animate-pulse rounded-3xl border border-white/10 bg-white/3 backdrop-blur" />
+          <div className="h-130 animate-pulse rounded-3xl border border-white/10 bg-white/3 backdrop-blur" />
+        </div>
+      </div>
+    );
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="mx-auto w-full max-w-3xl space-y-4">
+        <Link
+          href="/my-listings"
+          className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-white transition"
+        >
+          <span aria-hidden>←</span> Back to My Listings
+        </Link>
+
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-100">
+          {errorMsg}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
       {/* Top bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-medium text-white/50">Create</p>
+          <p className="text-xs font-medium text-white/50">Edit</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">
-            Add Travel Experience
+            Update Listing
           </h1>
           <p className="mt-2 text-sm text-white/65">
-            Share a title, location, a short story, and an image link.
+            Update listing details within 24 hours of posting.
           </p>
         </div>
 
         <Link
-          href="/feed"
+          href="/my-listings"
           className="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
         >
-          <span aria-hidden>←</span> Back to feed
+          <span aria-hidden>←</span> Back
         </Link>
       </div>
 
@@ -113,23 +167,6 @@ export default function CreateListing() {
               />
             </div>
 
-            {/* NEW: Price */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Price</label>
-              <input
-                type="number"
-                name="price"
-                placeholder="Optional (e.g. 250)"
-                value={form.price}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-white/20 focus:ring-2 focus:ring-white/20"
-                min="0"
-              />
-              <p className="text-xs text-white/45">
-                Optional. Leave empty if not applicable.
-              </p>
-            </div>
-
             <div className="space-y-2">
               <label className="text-sm font-medium text-white/80">
                 Image URL
@@ -162,17 +199,29 @@ export default function CreateListing() {
               />
             </div>
 
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/80">Price</label>
+              <input
+                type="number"
+                name="price"
+                placeholder="Optional"
+                value={form.price}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none transition focus:border-white/20 focus:ring-2 focus:ring-white/20"
+              />
+            </div>
+
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6"
+                className="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6 cursor-pointer"
               >
-                {submitting ? "Creating…" : "Create Listing"}
+                {submitting ? "Saving…" : "Save Changes"}
               </button>
 
               <span className="text-xs text-white/45">
-                Make sure your image URL is public.
+                Changes are restricted after 24 hours.
               </span>
             </div>
           </form>
@@ -214,11 +263,6 @@ export default function CreateListing() {
               <p className="mt-1 text-xs text-white/60">
                 {form.location || "Your location"}
               </p>
-
-              {/* NEW: price preview */}
-              {form.price !== "" ? (
-                <p className="mt-1 text-xs text-white/70">Price: {form.price}</p>
-              ) : null}
 
               <p className="mt-3 text-sm text-white/70">
                 {(form.description || "Your description…").slice(0, 90)}

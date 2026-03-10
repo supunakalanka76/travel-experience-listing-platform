@@ -7,7 +7,7 @@ const protect = (req, res, next) => {
     return res.status(401).json({ message: "No token provided" });
   }
 
-  // Support: "Bearer <token>" (standard) and also raw token
+  // Expect: "Bearer <token>" (standard), but also accept raw token
   const token = authHeader.startsWith("Bearer ")
     ? authHeader.split(" ")[1]
     : authHeader;

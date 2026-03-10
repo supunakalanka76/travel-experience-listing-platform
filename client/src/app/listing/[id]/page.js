@@ -1,17 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import API from "../../../services/api";
 import Image from "next/image";
 import Link from "next/link";
+import { Bookmark } from "lucide-react";
+
+function timeAgo(dateValue) {
+  if (!dateValue) return "";
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const diffMs = Date.now() - date.getTime();
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+
+  if (diffSec < 60) return `Posted ${diffSec}s ago`;
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `Posted ${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `Posted ${diffHr}h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `Posted ${diffDay}d ago`;
+
+  return `Posted ${date.toLocaleDateString()}`;
+}
 
 export default function ListingDetail() {
   const { id } = useParams();
-
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  // Saved state
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const postedText = useMemo(
+    () => timeAgo(listing?.createdAt),
+    [listing?.createdAt]
+  );
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -29,6 +57,39 @@ export default function ListingDetail() {
 
     if (id) fetchListing();
   }, [id]);
+
+  useEffect(() => {
+    let alive = true;
+
+    const checkSaved = async () => {
+      try {
+        const res = await API.get(`/saved/${id}`);
+        if (alive) setSaved(!!res.data?.saved);
+      } catch {
+        // not logged in -> ignore
+      }
+    };
+
+    if (id) checkSaved();
+
+    return () => {
+      alive = false;
+    };
+  }, [id]);
+
+  const toggleSave = async () => {
+    if (!id || saving) return;
+
+    try {
+      setSaving(true);
+      const res = await API.post(`/saved/${id}/toggle`);
+      setSaved(!!res.data?.saved);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -65,6 +126,8 @@ export default function ListingDetail() {
 
   if (!listing) return null;
 
+  const authorName = listing?.user?.name || "Unknown";
+
   return (
     <div className="mx-auto w-full max-w-4xl space-y-6">
       {/* Top bar */}
@@ -76,11 +139,37 @@ export default function ListingDetail() {
           <span aria-hidden>←</span> Back to feed
         </Link>
 
-        {listing.location ? (
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/3 px-3 py-1 text-xs font-medium text-white/70">
-            {listing.location}
-          </span>
-        ) : null}
+        <div className="flex items-center gap-2">
+          {listing.location ? (
+            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/3 px-3 py-1 text-xs font-medium text-white/70">
+              {listing.location}
+            </span>
+          ) : null}
+
+          {typeof listing.price === "number" ? (
+            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/3 px-3 py-1 text-xs font-semibold text-white/80">
+              ${listing.price}
+            </span>
+          ) : null}
+
+          {/* Save button */}
+          <button
+            type="button"
+            onClick={toggleSave}
+            disabled={saving}
+            className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold backdrop-blur transition cursor-pointer
+              ${
+                saved
+                  ? "border-white/25 bg-white/10 text-white"
+                  : "border-white/15 bg-white/3 text-white/80 hover:bg-white/6"
+              }
+              ${saving ? "opacity-60 cursor-not-allowed" : ""}
+            `}
+          >
+            <Bookmark className={`h-4 w-4 ${saved ? "fill-white" : ""}`} />
+            {saved ? "Saved" : "Save"}
+          </button>
+        </div>
       </div>
 
       {/* Hero image */}
@@ -104,6 +193,13 @@ export default function ListingDetail() {
             {listing.location ? (
               <p className="mt-2 text-sm text-white/75">{listing.location}</p>
             ) : null}
+
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-white/70">
+              <span>
+                By <span className="text-white/85">{authorName}</span>
+              </span>
+              {postedText ? <span>• {postedText}</span> : null}
+            </div>
           </div>
         </div>
       </div>
